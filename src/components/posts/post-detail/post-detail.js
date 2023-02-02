@@ -1,16 +1,20 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import Comments from "../comment/Comments";
 
 function PostDetail({ id, onPostDeleted, onPostEdited }) {
 
     const [postDetail, setPostDetail] = useState({});
     const [isPostTitleFormVisible, setPostTitleFormVisible] = useState(false);
     const [isPostContentFormVisible, setPostContentFormVisible] = useState(false);
+    const [commentsState, setCommentsState] = useState([]);
 
     const fetchPostDetail = () => {
-        axios.get("http://localhost:8086/api/v1/posts/" + id)
+        axios.get("http://localhost:8086/api/v1/posts/" + id+"/with-comments")
             .then(response => {
-                setPostDetail(response.data)
+                setPostDetail(response.data);
+                const comments = response.data.comments.map(m => { return {id:m.id, name:m.name} });
+                setCommentsState(comments);
             })
             .catch(err => console.log(err.message))
     };
@@ -67,6 +71,10 @@ function PostDetail({ id, onPostDeleted, onPostEdited }) {
             <div style={{ textAlign: "center" }}>
                 <h1>{postDetail.title}</h1>
                 <p>{postDetail.content}</p>
+
+                <strong>Comments</strong>
+                <Comments comments={commentsState} />
+
                 <input type="button" value="Delete" className="btn btn-danger" onClick={onDeletePostClicked} />&nbsp;
                 <input type="button" value="Edit title(Toggle)" className="btn btn-primary" onClick={onToggleChangeTitleClicked}></input>&nbsp;
                 <input type="button" value="Edit content(Toggle)" className="btn btn-secondary" onClick={onToggleChangeContentClicked}></input>

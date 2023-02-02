@@ -7,7 +7,6 @@ function Post({title, content, setSelected}) {
         </div>
         <h4>{title}</h4>
         <p>{content}</p>
-        {/* <input className="btn btn-danger" type="button" value="Delete" onClick={props.deletePost} /> */}
       </div>
     </div>
   );
