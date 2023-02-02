@@ -2,8 +2,10 @@ import AllPosts from "../all-posts/All-Posts";
 import PostDetail from "../post-detail/post-detail";
 import "../css/style.css"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import NewPost from "../new-post/NewPost";
+import { PostServiceBaseURL } from "../service/posts-service";
+import { SeletedPostContext } from "../context/SelectedPostContext";
 
 function Dashboard() {
     const [postsState, setPostsState] = useState([]);
@@ -11,11 +13,11 @@ function Dashboard() {
     const [fetchCountState, setFetchCountState] = useState(1);
 
     const fetchData = () => {
-        axios.get("http://localhost:8086/api/v1/posts")
+        axios.get(PostServiceBaseURL)
             .then(response => {
                 setPostsState(response.data);
             }).catch(error => {
-        });
+            });
     }
 
     useEffect(() => fetchData(), [fetchCountState]);
@@ -38,33 +40,34 @@ function Dashboard() {
     }
 
     return (
-        <>
-            <p>Total: {fetchCountState} fetches</p>
-            <AllPosts
-                posts={postsState}
-                setSelected={setSelected} />
-            <hr />
-            <div className="row">
-                <div className="col-6">
-                    <div className="component">
-                        <h4>New Post</h4>
-                        <NewPost onNewPostAdded={onNewPostAdded} />
-                    </div>
-                </div>
-                {
-                    selectedState !== 0 &&
+        <React.Fragment>
+            <SeletedPostContext.Provider value={selectedState}>
+                <p>Total: {fetchCountState} fetches</p>
+                <AllPosts
+                    posts={postsState}
+                    setSelected={setSelected} />
+                <hr />
+                <div className="row">
                     <div className="col-6">
                         <div className="component">
-                            <h4>Selected Post</h4>
-                            <PostDetail
-                                id={selectedState}
-                                onPostDeleted={onPostDeleted} 
-                                onPostEdited={onPostEdited}/>
+                            <h4>New Post</h4>
+                            <NewPost onNewPostAdded={onNewPostAdded} />
                         </div>
                     </div>
-                }
-            </div>
-        </>
+                    {
+                        selectedState !== 0 &&
+                        <div className="col-6">
+                            <div className="component">
+                                <h4>Selected Post</h4>
+                                <PostDetail
+                                    onPostDeleted={onPostDeleted}
+                                    onPostEdited={onPostEdited} />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </SeletedPostContext.Provider>
+        </React.Fragment>
     );
 }
 

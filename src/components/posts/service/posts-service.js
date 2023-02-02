@@ -1,0 +1,1 @@
+export const PostServiceBaseURL = "http://localhost:8086/api/v1/posts"; 

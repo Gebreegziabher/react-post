@@ -1,8 +1,12 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Comments from "../comment/Comments";
+import { SeletedPostContext } from "../context/SelectedPostContext";
+import { PostServiceBaseURL } from "../service/posts-service";
 
-function PostDetail({ id, onPostDeleted, onPostEdited }) {
+function PostDetail({ onPostDeleted, onPostEdited }) {
+
+    const idContext = useContext(SeletedPostContext);
 
     const [postDetail, setPostDetail] = useState({});
     const [isPostTitleFormVisible, setPostTitleFormVisible] = useState(false);
@@ -10,7 +14,7 @@ function PostDetail({ id, onPostDeleted, onPostEdited }) {
     const [commentsState, setCommentsState] = useState([]);
 
     const fetchPostDetail = () => {
-        axios.get("http://localhost:8086/api/v1/posts/" + id+"/with-comments")
+        axios.get(PostServiceBaseURL +"/"+ idContext+"/with-comments")
             .then(response => {
                 setPostDetail(response.data);
                 const comments = response.data.comments.map(m => { return {id:m.id, name:m.name} });
@@ -19,10 +23,10 @@ function PostDetail({ id, onPostDeleted, onPostEdited }) {
             .catch(err => console.log(err.message))
     };
 
-    useEffect(() => fetchPostDetail(), [id]);
+    useEffect(() => fetchPostDetail(), [idContext]);
 
     const onDeletePostClicked = () => {
-        axios.delete("http://localhost:8086/api/v1/posts/" + id, postDetail)
+        axios.delete(PostServiceBaseURL +"/"+ idContext, postDetail)
             .then(response => {
                 onPostDeleted(c => c + 1);
             })
@@ -58,12 +62,11 @@ function PostDetail({ id, onPostDeleted, onPostEdited }) {
     //Submit update data
     const submitEditedPost = (event) => {
         event.preventDefault();
-        axios.put("http://localhost:8086/api/v1/posts/" + id, postDetail)
+        axios.put(PostServiceBaseURL +"/"+ idContext, postDetail)
         .then(response => {
-            onPostDeleted(c => c + 1);
+            onPostEdited(c => c + 1);
         })
         .catch(err => console.log(err.message));
-        onPostEdited(c => c + 1);
     };
 
     return (
@@ -73,7 +76,7 @@ function PostDetail({ id, onPostDeleted, onPostEdited }) {
                 <p>{postDetail.content}</p>
 
                 <strong>Comments</strong>
-                <Comments comments={commentsState} />
+                {commentsState.length !=0 ? <Comments comments={commentsState}/> : <p>{"No comments"}</p>}
 
                 <input type="button" value="Delete" className="btn btn-danger" onClick={onDeletePostClicked} />&nbsp;
                 <input type="button" value="Edit title(Toggle)" className="btn btn-primary" onClick={onToggleChangeTitleClicked}></input>&nbsp;

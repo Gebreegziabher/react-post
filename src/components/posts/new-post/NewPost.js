@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useRef, useState } from "react";
+import { PostServiceBaseURL } from "../service/posts-service";
 
 function NewPost({onNewPostAdded}) {
     const [post, setPost] = useState({
@@ -17,7 +18,7 @@ function NewPost({onNewPostAdded}) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post("http://localhost:8086/api/v1/posts", post)
+        axios.post(PostServiceBaseURL, post)
             .then(data => {
                 setPost({
                     title: "",
