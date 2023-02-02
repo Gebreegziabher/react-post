@@ -2,7 +2,7 @@
   padding:20px;
   height: 100%;
   border-style: solid;
-  border-color:aquamarine;
+  border-color:#18d26e;
   border-width: 0.01em;
 }
 
@@ -54,11 +54,6 @@
   font-size: 24px;
 }
 
-.icon-box h4 a {
-  color: #444;
-  text-decoration: none;
-}
-
 .icon-box p {
   line-height: 24px;
   font-size: 14px;
@@ -82,7 +77,7 @@
   background: #35e888;
 }
 
-.icon-box:hover h4 a,
+.icon-box:hover h4,
 .icon-box:hover p {
   color: #fff;
 }

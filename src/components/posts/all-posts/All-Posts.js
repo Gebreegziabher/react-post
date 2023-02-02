@@ -1,26 +1,16 @@
 import Post from "../post/post";
-import "../css/style.css"
-import PostForm from "../post-form/PostForm";
-import axios from "axios";
-import { useEffect, useState } from "react";
 
-function AllPosts() {
-    const [postsState, setPostsState] = useState([]);
-
-    const fetchData = () => {
-        axios.get("http://localhost:8086/api/v1/posts")
-            .then(response => {
-                console.log('Success: ', response);
-                setPostsState(response.data);
-            }).catch(error => {
-            });
-    }
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const postsBlock = postsState.map(m => <Post id={m.id} key={m.id} title={m.title} content={m.content} />);
+function AllPosts({posts, deletePost, setSelected }) {
+    const postsBlock = posts.map(post => {
+        return <Post
+            id={post.id}
+            key={post.id}
+            title={post.title}
+            content={post.content}
+            deleteProduct={() => { deletePost(post.id) }}
+            setSelected={() => { setSelected(post.id) }}
+        />
+    });
 
     return (
         <div className="row">
